@@ -21,6 +21,7 @@ ul {
 }
 
 ul li {
+    position: relative;
     border: 1px solid grey;
     list-style: none;
     padding: 5px;
@@ -33,5 +34,13 @@ input {
 
 h1 {
     text-align: center;
+    color:
+    
 }
 
+i {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 10px;
+}
