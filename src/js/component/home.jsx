@@ -6,7 +6,7 @@ const Home = () => {
 		<div className="container">
 			<h1>My ToDos</h1>
 			<ul>
-				<li>
+				<li className="flex-container">
 					<input
 						type="text"
 						placeholder="¿Que necesitas hacer?">
