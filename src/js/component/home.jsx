@@ -1,38 +1,39 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 
 //En React, si quiero agregar --> concat
 // 			si quiero borrar  --> filter
 // 			si quiero actualizar --> map
 
 const Home = () => {
-	const [inputValue, setInputValue] = useState ("");
-	const [todos, setTodos] = useState ([]);
-
-
+	const [inputValue, setInputValue] = useState("");
+	const [todos, setTodos] = useState([]);
 
 	return (
 		<div className="container">
-			<h1>My ToDos</h1>
+			<h1><strong>Mis TuDus</strong></h1>
 			<ul>
 				<li className="flex-container; justify-content: space-between;">
 					<input
 						type="text"
-						onChange= {(e) => setInputValue(e.target.value)}
+						onChange={(event) => setInputValue(event.target.value)}
 						value={inputValue}
-						onKeyPress  ={(e) => {
-							if (e.key === "Enter") {
+						onKeyUp={(event) => {
+							if (event.key === "Enter") {
 								setTodos(todos.concat(inputValue));
+								setInputValue("");
 							}
 						}}
-						placeholder="¿Que necesitas hacer?">
-					</input>
+						placeholder= "¿Que necesitas hacer?"
+					></input>
 				</li>
-				<li>Hacer la cama <i class="far fa-times-circle "></i></li>
-				<li>Comprar comida <i class="far fa-times-circle"></i></li>
-				<li>Realizar proyectos <i class="far fa-times-circle"></i></li>
-				<li>Cita en el cine <i class="far fa-times-circle"></i></li>
+				{todos.map((task, index) => (
+				<li>
+					{task}<i class="far fa-times-circle"
+						onClick={() => setTodos(todos.filter((task, newIndex) => index != newIndex))}></i>
+				</li>
+				))}
 			</ul>
-			<div>No. tasks left</div>
+			<div><strong>Tengo {todos.length} tareas por hacer</strong></div>
 		</div>
 	);
 };
