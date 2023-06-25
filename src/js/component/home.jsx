@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect , useState } from "react";
 
 //En React, si quiero agregar --> concat
 // 			si quiero borrar  --> filter
@@ -23,18 +23,24 @@ const Home = () => {
 								setInputValue("");
 							}
 						}}
-						placeholder= "¿Que necesitas hacer?"
+						placeholder="¿Que necesitas hacer?"
 					></input>
 				</li>
 				{todos.map((task, index) => (
-				<li>
-					{task}<i class="far fa-times-circle"
-						onClick={() => setTodos(todos.filter((task, newIndex) => index != newIndex))}></i>
-				</li>
+					<li>
+						<strong>
+							{task}<i class="far fa-times-circle"
+								onClick={() => setTodos(todos.filter((task, newIndex) => index != newIndex))}></i>
+						</strong>
+					</li>
 				))}
 			</ul>
-			<div><strong>Tengo {todos.length} tareas por hacer</strong></div>
-		</div>
+			<div>
+				<p>
+					<strong>&nbsp;&nbsp;&nbsp;&nbsp;Tengo {todos.length} tareas por hacer</strong>
+				</p>
+			</div>
+		</div >
 	);
 };
 
