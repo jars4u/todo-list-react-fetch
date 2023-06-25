@@ -26,16 +26,19 @@ const Home = () => {
 		} catch (error) {
 			console.log(error);
 		}
-	}
+	};
 
 	//CREAR UN USUARIO
 	const createUser = async () => {
 		try {
 			let response = await fetch(`${URLBASE}/${USERBASE}`, {
 				method: "POST",
-				headers: { "Content-type": "application/json" },
+				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify([])
 			})
+			if (response.ok) {
+				getTask();
+			}
 
 		} catch (error) {
 			console.log(error);
@@ -44,29 +47,28 @@ const Home = () => {
 
 	//AGREGAR TAREA
 	const addTasks = async (event) => {
-		if (event.key == "Enter") {
-			try {
+		try {
+			if (event.key == "Enter") {
 				let response = await fetch(`${URLBASE}/${USERBASE}`, {
 					method: "PUT",
 					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify([...todos, inputValue])
-				})
+					body: JSON.stringify([...todos, { label: inputValue, done: false }]),
+				});
 				if (response.ok) {
-					getTask()
-					setInputValue({ label: "", done: false })
+					getTask();
+					setInputValue("")
 				} else {
 					console.log(response)
 				}
-
-			} catch (error) {
-				console.log(error);
 			}
+		} catch (error) {
+			console.log(error);
 
 		}
 	}
 
 	//BORRAR TAREA
-	const delTask = async (item) => {
+	const deleteTask = async (item) => {
 		try {
 			let response = await fetch(`${URLBASE}/${USERBASE}`, {
 				method: "PUT",
@@ -84,15 +86,15 @@ const Home = () => {
 		}
 	}
 
-	//ERROR MESSAGE ON INSPECTOR
-	// useEffect(() => {
-	// 	getTask()
-	// }, [])
+	//useEffect
+	useEffect(() => {
+		getTask();
+	}, []);
 
-
-
+	//DESPUES DE TANTO, EL RETURN RE-APARECE...
 	return (
 		<>
+			{/* EL INPUT DINAMICO */}
 			<div className="container">
 				<h1><strong>Mis TuDus</strong></h1>
 				<ul>
@@ -100,25 +102,28 @@ const Home = () => {
 						<input
 							type="text"
 							onChange={(event) => setInputValue(event.target.value)}
-							value={inputValue}
-							onKeyUp={(event) => {
-								if (event.key === "Enter") {
-									setTodos(todos.concat(inputValue));
-									setInputValue("");
-								}
-							}}
+							value={inputValue.label}
+							onKeyUp={addTasks}
 							placeholder="¿Que necesitas hacer?"
 						></input>
 					</li>
-					{todos.map((task, index) => (
-						<li key={index}>
-							<strong>
-								{task}<i className="far fa-times-circle"
-									onClick={() => setTodos(todos.filter((task, newIndex) => index != newIndex))}></i>
-							</strong>
-						</li>
-					))}
+
+					{/* MAPEO DE TAREAS Y BOTON PARA ELIMINAR ALGUNA */}
+					{todos.map((task, index) => {
+						return (
+							<li key={index}>
+								<strong>
+									{task.label}
+									<button onClick={() => deleteTask(index)}>
+										{/* <i className="far fa-times-circle"></i> */}
+									</button>
+								</strong>
+							</li>
+						);
+					})}
 				</ul>
+				
+				{/* //NRO DE TAREAS PENDIENTES POR HACER */}
 				<div>
 					<p>
 						<strong>&nbsp;&nbsp;&nbsp;&nbsp;Tengo {todos.length} tareas por hacer</strong>

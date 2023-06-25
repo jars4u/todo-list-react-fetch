@@ -23,8 +23,6 @@ ul li {
 input {
     font-size: 20px;
     border: none;
-    border-top-right-radius: 25px;
-    border-top-left-radius: 25px;
     border-bottom: 1px solid grey;
     outline: none;
     width: 100%;
@@ -47,4 +45,5 @@ i {
     right: 0;
     top: 0;
     padding: 10px;
+    border: 1px solid;
 }
