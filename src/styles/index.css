@@ -4,6 +4,7 @@ body {
 }
 
 ul {
+    background-color: whitesmoke;
     border: 3px solid darkslategrey;
     border-radius: 15px;
     padding: 0px;
@@ -27,7 +28,7 @@ input {
     border-bottom: 1px solid grey;
     outline: none;
     width: 100%;
-    background-color: blanchedalmond;
+    background-color: whitesmoke;
 }
 
 input:placeholder-shown {
