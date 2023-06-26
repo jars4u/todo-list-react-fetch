@@ -115,7 +115,7 @@ const Home = () => {
 								<strong>
 									{task.label}
 									<button onClick={() => deleteTask(index)}>
-										{/* <i className="far fa-times-circle"></i> */}
+										<i className="far fa-times-circle"></i>
 									</button>
 								</strong>
 							</li>
