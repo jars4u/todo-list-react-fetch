@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 //URL Y USUARIO BASE DE LA API
-const URLBASE = "https://assets.breatheco.de/apis/fake/todos/user"
+const URLBASE = "https://playground.4geeks.com/apis/fake/todos/user"
 const USERBASE = "jars4u"
 
 //En React, si quiero agregar --> concat
@@ -47,25 +47,24 @@ const Home = () => {
 
 	//AGREGAR TAREA
 	const addTasks = async (event) => {
-		try {
-			if (event.key == "Enter") {
+		if (event.key == "Enter") {
+			try {
 				let response = await fetch(`${URLBASE}/${USERBASE}`, {
 					method: "PUT",
 					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify([...todos, { label: inputValue, done: false }]),
+					body: JSON.stringify([...todos, inputValue]),
 				});
 				if (response.ok) {
 					getTask();
-					setInputValue("")
+					setInputValue({ label: "", done: false });
 				} else {
-					console.log(response)
+					console.log(response);
 				}
+			} catch (error) {
+				console.log(error);
 			}
-		} catch (error) {
-			console.log(error);
-
 		}
-	}
+	};
 
 	//BORRAR TAREA
 	const deleteTask = async (item) => {
@@ -86,12 +85,30 @@ const Home = () => {
 		}
 	}
 
-	//useEffect
-	useEffect(() => {
-		getTask();
-	}, []);
+	//BORRAR TODAS LAS TAREAS
+	const delAllTasks = async () => {
+		try {
+			let response = await fetch(`${URLBASE}/${USERBASE}`, {
+				method: "DELETE",
+				headers: { "Content-Type": "application/json" },
+			});
+			if (response.ok) {
+				getTask();
+			} else {
+				console.log("error borrando...");
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
-	//DESPUES DE TANTO, EL RETURN RE-APARECE...
+	//useEffect
+	// useEffect(() => {
+	// 	getTask();
+	// }, []);
+
+
+
 	return (
 		<>
 			{/* EL INPUT DINAMICO */}
@@ -113,7 +130,7 @@ const Home = () => {
 						return (
 							<li key={index}>
 								<strong>
-									{task.label}
+									{task}
 									<button onClick={() => deleteTask(index)}>
 										<i className="far fa-times-circle"></i>
 									</button>
@@ -122,14 +139,21 @@ const Home = () => {
 						);
 					})}
 				</ul>
-				
-				{/* //NRO DE TAREAS PENDIENTES POR HACER */}
+
+				{/* //NRO DE TAREAS PENDIENTES POR HACER Y BOTON BORRAR TODO */}
 				<div>
-					<p>
+					<div>
 						<strong>&nbsp;&nbsp;&nbsp;&nbsp;Tengo {todos.length} tareas por hacer</strong>
-					</p>
+					</div>
+
 				</div>
 			</div >
+			<button
+				className="btn btn-primary"
+				onClick={() => delAllTasks()}
+			>
+				Borrar tareas
+			</button>
 		</>
 	);
 };
