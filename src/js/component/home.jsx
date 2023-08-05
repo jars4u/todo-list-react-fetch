@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 const URLBASE = "https://assets.breatheco.de/apis/fake/todos/user"
 const USERBASE = "jars4u"
 
+
 //En React, si quiero agregar --> concat
 // 			si quiero borrar  --> filter
 // 			si quiero actualizar --> map
@@ -84,10 +85,26 @@ const Home = () => {
 		}
 	}
 
-	//ERROR MESSAGE ON INSPECTOR
-	// useEffect(() => {
-	// 	getTask()
-	// }, [])
+	//BORRAR TODAS LAS TAREAS
+	const delAllTasks = async () => {
+		try {
+			let response = await fetch(`${URLBASE}`, {
+				method: "DELETE",
+				headers: { "Content-Type": "application/json" },
+			});
+			if (response.ok) {
+				getTask();
+			} else {
+				console.log("error borrando...")
+			}
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
+	useEffect(() => {
+		getTask()
+	}, [])
 
 
 
@@ -98,9 +115,10 @@ const Home = () => {
 				<ul>
 					<li className="flex-container; justify-content: space-between;">
 						<input
+							id="input"
 							type="text"
 							onChange={(event) => setInputValue(event.target.value)}
-							value={inputValue}
+							value={inputValue.label}
 							onKeyUp={(event) => {
 								if (event.key === "Enter") {
 									setTodos(todos.concat(inputValue));
@@ -119,10 +137,13 @@ const Home = () => {
 						</li>
 					))}
 				</ul>
-				<div>
-					<p>
+				<div className="d-flex justify-content-between">
+					<div>
 						<strong>&nbsp;&nbsp;&nbsp;&nbsp;Tengo {todos.length} tareas por hacer</strong>
-					</p>
+					</div>
+					<div className="m-2">
+						<button className="btn btn-primary" onClick={delAllTasks}>Borrar tareas</button>
+					</div>
 				</div>
 			</div >
 		</>
