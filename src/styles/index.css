@@ -47,9 +47,9 @@ i {
     /* padding: 10px; */
 }
 
-button {
+span {
     position: absolute;
-    right: 0;
+    right: 5px;
     border: none;
     background-color: whitesmoke;
 }

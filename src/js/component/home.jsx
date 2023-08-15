@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from "react";
 
 //URL Y USUARIO BASE DE LA API
-const URLBASE = "https://playground.4geeks.com/apis/fake/todos/user"
-const USERBASE = "jars4u"
+const URLBASE = "https://playground.4geeks.com/apis/fake/todos/user/jars4u"
 
 //En React, si quiero agregar --> concat
 // 			si quiero borrar  --> filter
 // 			si quiero actualizar --> map
 
 const Home = () => {
-	const [inputValue, setInputValue] = useState({ label: "", done: false });
+	const [inputValue, setInputValue] = useState({label: "", done: false});
 	const [todos, setTodos] = useState([]);
+
 
 	//OBTENER LAS TAREAS
 	const getTask = async () => {
 		try {
-			let response = await fetch(`${URLBASE}/${USERBASE}`)
+			let response = await fetch(`${URLBASE}`)
 			let data = await response.json()
+			console.log(data)
 			if (response.status == 404) {
 				createUser()
 			} else {
@@ -31,13 +32,15 @@ const Home = () => {
 	//CREAR UN USUARIO
 	const createUser = async () => {
 		try {
-			let response = await fetch(`${URLBASE}/${USERBASE}`, {
+			let response = await fetch(`${URLBASE}`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify([])
 			})
 			if (response.ok) {
 				getTask();
+			} else {
+				console.log("usuario no creado");
 			}
 
 		} catch (error) {
@@ -49,7 +52,7 @@ const Home = () => {
 	const addTasks = async (event) => {
 		if (event.key == "Enter") {
 			try {
-				let response = await fetch(`${URLBASE}/${USERBASE}`, {
+				let response = await fetch(`${URLBASE}`, {
 					method: "PUT",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify([...todos, inputValue]),
@@ -69,7 +72,7 @@ const Home = () => {
 	//BORRAR TAREA
 	const deleteTask = async (item) => {
 		try {
-			let response = await fetch(`${URLBASE}/${USERBASE}`, {
+			let response = await fetch(`${URLBASE}`, {
 				method: "PUT",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(todos.filter((_, index) => index != item))
@@ -88,12 +91,14 @@ const Home = () => {
 	//BORRAR TODAS LAS TAREAS
 	const delAllTasks = async () => {
 		try {
-			let response = await fetch(`${URLBASE}/${USERBASE}`, {
+			let response = await fetch(`${URLBASE}`, {
 				method: "DELETE",
 				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ label: "", done: false })
 			});
 			if (response.ok) {
 				getTask();
+				console.log("borrado")
 			} else {
 				console.log("error borrando...");
 			}
@@ -102,10 +107,10 @@ const Home = () => {
 		}
 	};
 
-	//useEffect
-	// useEffect(() => {
-	// 	getTask();
-	// }, []);
+
+	useEffect(() => {
+		getTask();
+	}, []);
 
 
 
@@ -128,12 +133,12 @@ const Home = () => {
 					{/* MAPEO DE TAREAS Y BOTON PARA ELIMINAR ALGUNA */}
 					{todos.map((task, index) => {
 						return (
-							<li key={index}>
+							<li className="d-flex justify-content-between" key={index}>
 								<strong>
 									{task}
-									<button onClick={() => deleteTask(index)}>
+									<span onClick={() => deleteTask(index)}>
 										<i className="far fa-times-circle"></i>
-									</button>
+									</span>
 								</strong>
 							</li>
 						);
@@ -141,19 +146,19 @@ const Home = () => {
 				</ul>
 
 				{/* //NRO DE TAREAS PENDIENTES POR HACER Y BOTON BORRAR TODO */}
-				<div>
+				<div className="d-flex justify-content-between mt-3 pe-3">
 					<div>
 						<strong>&nbsp;&nbsp;&nbsp;&nbsp;Tengo {todos.length} tareas por hacer</strong>
 					</div>
 
+					<button
+						className="btn btn-danger"
+						onClick={() => delAllTasks()}
+					>
+						Borrar todas las tareas
+					</button>
 				</div>
 			</div >
-			<button
-				className="btn btn-primary"
-				onClick={() => delAllTasks()}
-			>
-				Borrar tareas
-			</button>
 		</>
 	);
 };
