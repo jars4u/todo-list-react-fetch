@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 //URL Y USUARIO BASE DE LA API
 const URLBASE = "https://playground.4geeks.com/apis/fake/todos/user"
+const USERBASE = "jars4u"
 
 const initialState = {
 	label: "",
@@ -10,7 +11,6 @@ const initialState = {
 
 const Home = () => {
 	const [allTasks, setAllTasks] = useState([])
-	const [userBase, setUserBase] = useState("")
 	const [task, setTask] = useState(initialState)
 
 
@@ -19,16 +19,16 @@ const Home = () => {
 	const addTask = async (event) => {
 		if (event.key == "Enter") {
 			try {
-				let response = await fetch(`${URLBASE}/${userBase}`, {
+				let response = await fetch(`${URLBASE}/${USERBASE}`, {
 					method: "PUT",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify([...allTasks, task]),
 				});
 				if (response.ok) {
 					getAllTasks();
-					setAllTasks({ label: "", done: false });
+					setTask(initialState);
 				} else {
-					console.log(response);
+					console.log("La tarea no se ha agregado");
 				}
 			} catch (error) {
 				console.log(error);
@@ -38,9 +38,9 @@ const Home = () => {
 
 
 	//CREA UN USUARIO
-	async function createUser() {
+	const createUser = async () => {
 		try {
-			let response = await fetch(`${URLBASE}/${userBase}`,
+			let response = await fetch(`${URLBASE}/${USERBASE}`,
 				{
 					method: "POST",
 					headers: {
@@ -50,10 +50,9 @@ const Home = () => {
 				})
 
 			if (response.ok) {
-				setUserBase("jars4u")
 				getAllTasks()
 			} else {
-				console.log("User not create")
+				console.log("Usuario no se ha creado")
 			}
 
 		} catch (err) {
@@ -68,17 +67,18 @@ const Home = () => {
 	//OBTENER TAREAS
 	const getAllTasks = async () => {
 		try {
-			let response = await fetch(`${URLBASE}/${userBase}`)
+			let response = await fetch(`${URLBASE}/${USERBASE}`)
 			let data = await response.json()
 
 			if (response.status == 404) {
 				createUser()
+
 			} else {
-				// setAllTasks(data)
-				setAllTasks({
-					label: "bañar al perro",
-					done: false,
-				})
+				setAllTasks(data)
+				// setAllTasks({
+				// 	label: "bañar al perro",
+				// 	done: false,
+				// })
 			}
 		} catch (err) {
 			console.log(err)
@@ -90,12 +90,12 @@ const Home = () => {
 	//BORRAR TAREAS:
 	const deleteAllTask = async () => {
 		try {
-			let response = await fetch(`${URLBASE}/${userBase}`, {
-				method: "PUT",
+			let response = await fetch(`${URLBASE}/${USERBASE}`, {
+				method: "DELETE",
 				headers: {
 					"Content-type": "application/json"
 				},
-				body: JSON.stringify([{ label: "example task", done: false }])
+				// body: JSON.stringify([{ label: "example task", done: false }])
 			})
 
 			if (response.ok) {
@@ -120,7 +120,6 @@ const Home = () => {
 		setTask({
 			...task,
 			[target.name]: target.value,
-			done: false
 		})
 	}
 
@@ -175,7 +174,6 @@ const Home = () => {
 					<div>
 						<strong>&nbsp;&nbsp;&nbsp;&nbsp;Tengo {allTasks.length} tareas por hacer</strong>
 					</div>
-
 					<button
 						className="btn btn-danger"
 						onClick={() => deleteAllTask()}
