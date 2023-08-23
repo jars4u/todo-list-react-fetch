@@ -8,58 +8,23 @@ const URLBASE = "https://playground.4geeks.com/apis/fake/todos/user/jars4u"
 // 			si quiero actualizar --> map
 
 const Home = () => {
-	const [inputValue, setInputValue] = useState({label: "", done: false});
-	const [todos, setTodos] = useState([]);
+	const [allTasks, setAllTasks] = useState([])
+	const [task, setTask] = useState({})
 
 
-	//OBTENER LAS TAREAS
-	const getTask = async () => {
-		try {
-			let response = await fetch(`${URLBASE}`)
-			let data = await response.json()
-			console.log(data)
-			if (response.status == 404) {
-				createUser()
-			} else {
-				setTodos(data)
-			}
-
-		} catch (error) {
-			console.log(error);
-		}
-	};
-
-	//CREAR UN USUARIO
-	const createUser = async () => {
-		try {
-			let response = await fetch(`${URLBASE}`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify([])
-			})
-			if (response.ok) {
-				getTask();
-			} else {
-				console.log("usuario no creado");
-			}
-
-		} catch (error) {
-			console.log(error);
-		}
-	}
 
 	//AGREGAR TAREA
-	const addTasks = async (event) => {
+	const addTask = async (event) => {
 		if (event.key == "Enter") {
 			try {
 				let response = await fetch(`${URLBASE}`, {
 					method: "PUT",
 					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify([...todos, inputValue]),
+					body: JSON.stringify([...allTasks, task]),
 				});
 				if (response.ok) {
-					getTask();
-					setInputValue({ label: "", done: false });
+					getAllTasks();
+					// setAllTasks({ label: "", done: false });
 				} else {
 					console.log(response);
 				}
@@ -69,49 +34,67 @@ const Home = () => {
 		}
 	};
 
-	//BORRAR TAREA
-	const deleteTask = async (item) => {
+
+
+
+
+	//OBTENER TAREAS
+	async function getAllTasks() {
 		try {
-			let response = await fetch(`${URLBASE}`, {
-				method: "PUT",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(todos.filter((_, index) => index != item))
-			})
-			if (response.ok) {
-				getTask()
-				setInputValue({ label: "", done: false })
+			let response = await fetch(`${URLBASE}`)
+			let data = await response.json()
+
+			if (response.status == 404) {
+				createUser()
 			} else {
-				console.log(response)
+				setAllTasks(data)
 			}
-		} catch (error) {
-			console.log(error);
+		} catch (err) {
+			console.log(err)
 		}
 	}
 
-	//BORRAR TODAS LAS TAREAS
-	const delAllTasks = async () => {
+
+
+	//BORRAR TAREAS:
+	async function deleteAllTask() {
 		try {
 			let response = await fetch(`${URLBASE}`, {
-				method: "DELETE",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ label: "", done: false })
-			});
-			if (response.ok) {
-				getTask();
-				console.log("borrado")
-			} else {
-				console.log("error borrando...");
+				method: "PUT",
+				headers: {
+					"Content-type": "application/json"
+				},
+				body: JSON.stringify([{ label: "example task", done: false }])
 			}
-		} catch (error) {
-			console.log(error);
+			)
+			getAllTasks()
+
+		} catch (err) {
+			console.log(err)
 		}
-	};
+	}
+
 
 
 	useEffect(() => {
-		getTask();
-	}, []);
+		getAllTasks()
+	}, [])
 
+
+	function handleChange({ target }) {
+		setTask({
+			...task,
+			[target.name]: target.value,
+			done: false
+		})
+	}
+
+
+
+	function handleDeleteTask(index) {
+		const oneLessTask = allTasks.filter(task => task.label != allTasks[index].label)
+		setAllTasks(oneLessTask)
+	}
 
 
 	return (
@@ -123,20 +106,20 @@ const Home = () => {
 					<li className="flex-container; justify-content: space-between;">
 						<input
 							type="text"
-							onChange={(event) => setInputValue(event.target.value)}
-							value={inputValue.label}
-							onKeyUp={addTasks}
+							onChange={handleChange}
+							value={task.label}
+							onKeyUp={addTask}
 							placeholder="¿Que necesitas hacer?"
 						></input>
 					</li>
 
 					{/* MAPEO DE TAREAS Y BOTON PARA ELIMINAR ALGUNA */}
-					{todos.map((task, index) => {
+					{allTasks.map((item, index) => {
 						return (
 							<li className="d-flex justify-content-between" key={index}>
 								<strong>
-									{task}
-									<span onClick={() => deleteTask(index)}>
+									{item.label}
+									<span onClick={() => handleDeleteTask(index)}>
 										<i className="far fa-times-circle"></i>
 									</span>
 								</strong>
@@ -148,12 +131,12 @@ const Home = () => {
 				{/* //NRO DE TAREAS PENDIENTES POR HACER Y BOTON BORRAR TODO */}
 				<div className="d-flex justify-content-between mt-3 pe-3">
 					<div>
-						<strong>&nbsp;&nbsp;&nbsp;&nbsp;Tengo {todos.length} tareas por hacer</strong>
+						<strong>&nbsp;&nbsp;&nbsp;&nbsp;Tengo {allTasks.length} tareas por hacer</strong>
 					</div>
 
 					<button
 						className="btn btn-danger"
-						onClick={() => delAllTasks()}
+						onClick={() => deleteAllTask()}
 					>
 						Borrar todas las tareas
 					</button>
