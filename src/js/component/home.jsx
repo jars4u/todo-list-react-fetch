@@ -3,12 +3,14 @@ import React, { useEffect, useState } from "react";
 //URL Y USUARIO BASE DE LA API
 const URLBASE = "https://playground.4geeks.com/apis/fake/todos/user/jars4u"
 
-//En React, si quiero agregar --> concat
-// 			si quiero borrar  --> filter
-// 			si quiero actualizar --> map
 
 const Home = () => {
-	const [allTasks, setAllTasks] = useState([])
+	const [allTasks, setAllTasks] = useState([
+		{
+			label: "",
+			done: false,
+		}
+	])
 	const [task, setTask] = useState({})
 
 
@@ -39,7 +41,7 @@ const Home = () => {
 
 
 	//OBTENER TAREAS
-	async function getAllTasks() {
+	const getAllTasks = async () => {
 		try {
 			let response = await fetch(`${URLBASE}`)
 			let data = await response.json()
@@ -57,7 +59,7 @@ const Home = () => {
 
 
 	//BORRAR TAREAS:
-	async function deleteAllTask() {
+	const deleteAllTask = async () => {
 		try {
 			let response = await fetch(`${URLBASE}`, {
 				method: "PUT",
@@ -81,7 +83,7 @@ const Home = () => {
 	}, [])
 
 
-	function handleChange({ target }) {
+	const handleChange = ({ target }) => {
 		setTask({
 			...task,
 			[target.name]: target.value,
@@ -91,9 +93,9 @@ const Home = () => {
 
 
 
-	function handleDeleteTask(index) {
-		const oneLessTask = allTasks.filter(task => task.label != allTasks[index].label)
-		setAllTasks(oneLessTask)
+	const handleDeleteTask = (index) => {
+		const delTask = allTasks.filter(task => task.label != allTasks[index].label)
+		setAllTasks(delTask)
 	}
 
 
